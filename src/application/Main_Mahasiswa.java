@@ -3,6 +3,7 @@ package application;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -18,7 +19,11 @@ public class Main_Mahasiswa extends Application {
 
     Stage window;
     TableView<Mahasiswa> table;
-    TextField nameInput, nimInput, fakultasInput, jurusanInput, alamatInput, kotaInput, kode_posInput, hobbyInput;
+    TextField nameInput, nimInput, fakultasInput, jurusanInput, alamatInput, kotaInput, kodeInput, hobbyInput;
+    Button addButton = new Button("Add");
+    Button editButton = new Button("Edit");
+    Button deleteButton = new Button("Delete");
+    Button saveButton = new Button("Save");
 
     public static void main(String[] args) {
         launch(args);
@@ -30,7 +35,7 @@ public class Main_Mahasiswa extends Application {
         window.setTitle("Menu Tables - JavaFX");
 
         TableColumn<Mahasiswa, String> nameColumn = new TableColumn<>("Name");
-        nameColumn.setMinWidth(200);
+        nameColumn.setMinWidth(100);
         nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
 
         TableColumn<Mahasiswa, String> nimColumn = new TableColumn<>("NIM");
@@ -53,9 +58,9 @@ public class Main_Mahasiswa extends Application {
         kotaColumn.setMinWidth(100);
         kotaColumn.setCellValueFactory(new PropertyValueFactory<>("kota"));
         
-        TableColumn<Mahasiswa, String> kode_posColumn = new TableColumn<>("Kode Pos");
-        kode_posColumn.setMinWidth(100);
-        kode_posColumn.setCellValueFactory(new PropertyValueFactory<>("kode_pos"));
+        TableColumn<Mahasiswa, String> kodeColumn = new TableColumn<>("Kode");
+        kodeColumn.setMinWidth(100);
+        kodeColumn.setCellValueFactory(new PropertyValueFactory<>("kode"));
         
         TableColumn<Mahasiswa, String> hobbyColumn = new TableColumn<>("Hobby");
         hobbyColumn.setMinWidth(100);
@@ -71,11 +76,11 @@ public class Main_Mahasiswa extends Application {
 
         fakultasInput = new TextField();
         fakultasInput.setPromptText("Fakultas");
-        fakultasInput.setMinWidth(100);
+        fakultasInput.setMinWidth(50);
         
         jurusanInput = new TextField();
         jurusanInput.setPromptText("Jurusan");
-        jurusanInput.setMinWidth(100);
+        jurusanInput.setMinWidth(50);
         
         alamatInput = new TextField();
         alamatInput.setPromptText("Alamat");
@@ -83,38 +88,44 @@ public class Main_Mahasiswa extends Application {
         
         kotaInput = new TextField();
         kotaInput.setPromptText("Kota");
-        kotaInput.setMinWidth(100);
+        kotaInput.setMinWidth(50);
         
-        kode_posInput = new TextField();
-        kode_posInput.setPromptText("Kode Pos");
+        kodeInput = new TextField();
+        kodeInput.setPromptText("Kode Pos");
         
         hobbyInput = new TextField();
         hobbyInput.setPromptText("Hobby");
-        hobbyInput.setMinWidth(100);
+        hobbyInput.setMinWidth(50);
         
-        Button addButton = new Button("Add");
         addButton.setOnAction(e -> addButtonClicked());
-        Button deleteButton = new Button("Delete");
-        deleteButton.setOnAction(e -> deleteButtonClicked());
+        editButton.setOnAction(e -> editButtonClicked());
+        deleteButton.setOnAction(e -> deleteButtonClicked());        
+        saveButton.setOnAction(e -> saveButtonClicked());
+        saveButton.setVisible(false);
 
         HBox hBox = new HBox();
         hBox.setPadding(new Insets(10,10,10,10));
         hBox.setSpacing(10);
-        hBox.getChildren().addAll(nameInput, nimInput, fakultasInput, jurusanInput, alamatInput, kotaInput, kode_posInput, hobbyInput, addButton, deleteButton);
-
+        hBox.getChildren().addAll(nameInput, nimInput, fakultasInput, jurusanInput, alamatInput, kotaInput, kodeInput, hobbyInput);
+        
         table = new TableView<>();
         table.setItems(getMahasiswa());
-        table.getColumns().addAll(nameColumn, nimColumn, fakultasColumn, jurusanColumn, alamatColumn, kotaColumn, kode_posColumn, hobbyColumn);
+        table.getColumns().addAll(nameColumn, nimColumn, fakultasColumn, jurusanColumn, alamatColumn, kotaColumn, kodeColumn, hobbyColumn);
 
+        HBox hBoxB = new HBox();
+        hBoxB.setPadding(new Insets(10,10,10,10));
+        hBoxB.setSpacing(10);
+        hBoxB.getChildren().addAll(addButton,editButton, deleteButton, saveButton);
+                
         VBox vBox = new VBox();
-        vBox.getChildren().addAll(table, hBox);
+        vBox.getChildren().addAll(table, hBox, hBoxB);
 
         Scene scene = new Scene(vBox);
         window.setScene(scene);
         window.show();
     }
 
-    public void addButtonClicked(){
+    public void addButtonClicked() {
         Mahasiswa mahasiswa = new Mahasiswa();
         mahasiswa.setName(nameInput.getText());
         mahasiswa.setNIM(Integer.parseInt(nimInput.getText()));
@@ -122,7 +133,7 @@ public class Main_Mahasiswa extends Application {
         mahasiswa.setJurusan(jurusanInput.getText());
         mahasiswa.setAlamat(alamatInput.getText());
         mahasiswa.setKota(kotaInput.getText());
-        mahasiswa.setKode_Pos(Integer.parseInt(kode_posInput.getText()));
+        mahasiswa.setKode(kodeInput.getText());
         mahasiswa.setHobby(hobbyInput.getText());
         table.getItems().add(mahasiswa);
         nameInput.clear();
@@ -131,23 +142,68 @@ public class Main_Mahasiswa extends Application {
         jurusanInput.clear();
         alamatInput.clear();
         kotaInput.clear();
-        kode_posInput.clear();
+        kodeInput.clear();
         hobbyInput.clear();
+    }
+    
+    public void editButtonClicked(){
+    	ObservableList<Mahasiswa> mahasiswaSelected, allMahasiswas;
+        allMahasiswas = table.getItems();
+        mahasiswaSelected = table.getSelectionModel().getSelectedItems();
+        addButton.setDisable(true);
+        deleteButton.setDisable(true);
+        editButton.setDisable(true);
+        saveButton.setVisible(true);
+        nameInput.setText(mahasiswaSelected.get(0).getName());
+        nimInput.setText(""+mahasiswaSelected.get(0).getNim());
+        fakultasInput.setText(mahasiswaSelected.get(0).getFakultas());
+        jurusanInput.setText(mahasiswaSelected.get(0).getJurusan());
+        alamatInput.setText(mahasiswaSelected.get(0).getAlamat());
+        kotaInput.setText(mahasiswaSelected.get(0).getKota());
+        kodeInput.setText(mahasiswaSelected.get(0).getKode());
+        hobbyInput.setText(mahasiswaSelected.get(0).getHobby());
+    }
+        
+    public void saveButtonClicked(){
+    	ObservableList<Mahasiswa> mahasiswaSelected, allMahasiswas;
+        allMahasiswas = table.getItems();
+        mahasiswaSelected = table.getSelectionModel().getSelectedItems();
+    	Mahasiswa mahasiswa = new Mahasiswa();
+        mahasiswa.setName(nameInput.getText());
+        mahasiswa.setNIM(Integer.parseInt(nimInput.getText()));
+        mahasiswa.setFakultas(fakultasInput.getText());
+        mahasiswa.setJurusan(jurusanInput.getText());
+        mahasiswa.setAlamat(alamatInput.getText());
+        mahasiswa.setKota(kotaInput.getText());
+        mahasiswa.setKode(kodeInput.getText());
+        mahasiswa.setHobby(hobbyInput.getText());
+        mahasiswaSelected.forEach(allMahasiswas::remove);
+        table.getItems().add(mahasiswa);
+        nameInput.clear();
+        nimInput.clear();
+        fakultasInput.clear();
+        jurusanInput.clear();
+        alamatInput.clear();
+        kotaInput.clear();
+        kodeInput.clear();
+        hobbyInput.clear();
+        addButton.setDisable(false);
+        editButton.setDisable(false);
+        deleteButton.setDisable(false);
+        saveButton.setVisible(false);
     }
 
     public void deleteButtonClicked(){
         ObservableList<Mahasiswa> mahasiswaSelected, allMahasiswas;
         allMahasiswas = table.getItems();
         mahasiswaSelected = table.getSelectionModel().getSelectedItems();
-
         mahasiswaSelected.forEach(allMahasiswas::remove);
     }
 
     public ObservableList<Mahasiswa> getMahasiswa(){
         ObservableList<Mahasiswa> mahasiswas = FXCollections.observableArrayList();
-        mahasiswas.add(new Mahasiswa("Dedi", 31, "Teknik", "Informatika", "Munjungan", "Trenggalek", 65, "Makan"));
-        mahasiswas.add(new Mahasiswa("Andi", 32, "Teknik", "IF", "Mojokerto", "Mojo", 543, "Oyi"));
+        mahasiswas.add(new Mahasiswa("Dedi", 31, "Teknik", "Informatika", "Munjungan", "Trenggalek", "65", "Makan"));
+        mahasiswas.add(new Mahasiswa("Andi", 32, "Teknik", "Informatika", "Mojo", "Mojokerto", "43", "Mangan"));
         return mahasiswas;
     }
-
 }

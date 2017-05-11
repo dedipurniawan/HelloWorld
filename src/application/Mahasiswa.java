@@ -8,7 +8,7 @@ public class Mahasiswa {
     private String jurusan;
     private String alamat;
     private String kota;
-    private int kode_pos;
+    private String kode;
     private String hobby;   
        
     public Mahasiswa() {
@@ -18,19 +18,19 @@ public class Mahasiswa {
         this.jurusan = "";
         this.alamat = "";
         this.kota = "";
-        this.kode_pos = 1;
+        this.kode = "";
         this.hobby = "";
     }   
 
     public Mahasiswa(String name, int nim, String fakultas, String jurusan, String alamat, String kota,
-			int kode_pos, String hobby) {
+			String kode, String hobby) {
 		this.name = name;
 		this.nim = nim;
 		this.fakultas = fakultas;
 		this.jurusan = jurusan;
 		this.alamat = alamat;
 		this.kota = kota;
-		this.kode_pos = kode_pos;
+		this.kode = kode;
 		this.hobby = hobby;
 	}
 
@@ -42,7 +42,7 @@ public class Mahasiswa {
         this.name = name;
     }
 
-    public double getNim() {
+    public int getNim() {
         return nim;
     }
 
@@ -82,12 +82,12 @@ public class Mahasiswa {
         this.kota = kota;
     }
     
-    public double getKode_Pos() {
-        return kode_pos;
+    public String getKode() {
+        return kode;
     }
 
-    public void setKode_Pos(int kode_pos) {
-        this.kode_pos = kode_pos;
+    public void setKode(String kode) {
+        this.kode = kode;
     }
     
     public String getHobby() {
